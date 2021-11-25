@@ -1,4 +1,4 @@
-## MergeBot
+# MergeBot
 
 A simple telegram bot that takes a list of files sent by the user and returns them 7zipped or merged.
 
@@ -12,7 +12,7 @@ A simple telegram bot that takes a list of files sent by the user and returns th
 /clear - Clear the file list
 ```
 
-##Env Vars
+## Env Vars
 
 ```
 BOT_TOKEN - Make a bot from https://t.me/BotFather and enter the token here.
