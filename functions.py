@@ -33,7 +33,6 @@ def zip_files(path, part_size):
     size = int(part_size) if part_size else 1945.6
     copy_filter = [{"id": FILTER_COPY}]
 
-
     try:
         os.mkdir(partsdir)
     except Exception as e:
