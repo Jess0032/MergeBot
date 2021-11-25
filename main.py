@@ -87,19 +87,19 @@ async def compress(event):
     inicial = datetime.now()
     for message_id in [x for x in users_list[user_id]]:
         message: Message = await bot.get_messages(user_id, limit=1, ids=message_id)
-        await download_file(message, progress_download, str(dirpath))
+        await download_file(message, dirpath)
         users_list[user_id].pop(message_id)
     await progress_download.edit(
         f"Descargas finalizadas en {str((datetime.now() - inicial).total_seconds())} segundos, procediendo a comprimir.")
 
     parts_path = zip_files(dirpath, size)
     await event.respond("Compresión finalizada")
-    progress_upload = await event.respond("Subiendo...")
+    await event.respond("Subiendo...")
     inicial = datetime.now()
     for file in parts_path.iterdir():
-        await upload_file(user_id, file, progress_upload)
+        await upload_file(user_id, file)
     shutil.rmtree(str(parts_path.absolute()))
-    await progress_upload.edit(f"Subido en {str((datetime.now() - inicial).total_seconds())} segundos.")
+    await event.respond(f"Subido en {str((datetime.now() - inicial).total_seconds())} segundos.")
 
 
 @bot.on(NewMessage(pattern='/merge'))
@@ -131,7 +131,7 @@ async def merge(event, user_id, name_file_final):
     inicial = datetime.now()
     for message_id in [x for x in users_list[user_id] if users_list[user_id][x] == mime_type]:
         message: Message = await bot.get_messages(user_id, limit=1, ids=message_id)
-        await download_file(message, progress_download, dirpath)
+        await download_file(message, dirpath)
         users_list[user_id].pop(message_id)
 
     await progress_download.edit(
@@ -148,29 +148,26 @@ async def merge(event, user_id, name_file_final):
     file = f'{user_id}/{name_file_final}'
     inicial = datetime.now()
     progress_upload = await event.respond("Subiendo...")
-    await upload_file(user_id, file, progress_upload)
+    await upload_file(user_id, file)
     os.remove(file)
     await progress_upload.edit(f"Subido en {str((datetime.now() - inicial).total_seconds())} segundos.")
 
 
-async def download_file(message: Message, progress_message: Message, dirpath: str):
+async def download_file(message: Message, dirpath: str):
     filename = message.text if message.video and message.text else message.file.name
     print(filename)
     filepath = f'{dirpath}/{filename}'
     try:
         file = await message.download_media(file=filepath)
-        if file:
-            await progress_message.edit("Descarga exitosa")
     except Exception as exc:
-        await message.edit(exc)
+        print(exc)
 
 
-async def upload_file(user_id: str, file: str, progress_message: Message):
+async def upload_file(user_id: str, file: str):
     try:
         await bot.send_file(user_id, file=file)
-        await progress_message.edit("Subida exitosa")
     except Exception as exc:
-        await progress_message.edit(exc)
+        print(exc)
 
 
 
