@@ -1,0 +1,5 @@
+Telethon
+telethon-tgcrypto
+PyPDF2
+multivolumefile
+py7zr
